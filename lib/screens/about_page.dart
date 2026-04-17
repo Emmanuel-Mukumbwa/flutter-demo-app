@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
 
-  void _sendEmail() async {
+  void _sendEmail() async { 
     final emailUri = Uri(
       scheme: 'mailto',
       path: 'emukumbwa2419@gmail.com',
@@ -46,7 +46,7 @@ class AboutPage extends StatelessWidget {
             const SizedBox(height: 8),
             const Text(
               'Full‑stack developer building practical digital products with Flutter, React, Node.js, and PHP.',
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: 16), 
             ),
             const SizedBox(height: 24),
             const Text(
