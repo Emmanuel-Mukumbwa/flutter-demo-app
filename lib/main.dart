@@ -1,11 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:window_manager/window_manager.dart';
+
 import 'screens/about_page.dart';
 import 'screens/projects_page.dart';
 
-void main() {
+/// ENTRY POINT
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Enable Linux/desktop window control
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = const WindowOptions(
+    fullScreen: true,
+    center: true,
+    backgroundColor: Colors.transparent,
+    skipTaskbar: true,
+    titleBarStyle: TitleBarStyle.hidden,
+  );
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+    await windowManager.setFullScreen(true);
+    await windowManager.setAlwaysOnTop(true);
+  });
+
   runApp(const MyApp());
 }
 
+/// ROOT APP
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -23,6 +47,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// MAIN SHELL (TABS)
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
 
@@ -73,6 +98,7 @@ class _MainShellState extends State<MainShell> {
   }
 }
 
+/// HOME SCREEN
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -83,8 +109,7 @@ class HomeScreen extends StatelessWidget {
         title: const Text('Welcome!'),
         content: const Text(
           'Thanks for checking out my Flutter demo app.\n\n'
-          'This app shows how to organise multiple screens, '
-          'use Material 3, and build a clean interface.',
+          'This app now runs in FULLSCREEN kiosk mode on Linux.',
         ),
         actions: [
           TextButton(
@@ -111,7 +136,7 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Hero section
+            // HERO
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
@@ -139,7 +164,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'A simple app with multiple screens and clean UI.',
+                    'Now running in full-screen POS kiosk mode.',
                     style: TextStyle(color: Colors.white70, fontSize: 16),
                   ),
                   const SizedBox(height: 20),
@@ -151,14 +176,18 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
+
             const SizedBox(height: 24),
+
             const Text(
               'Quick Stats',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
+
             const SizedBox(height: 12),
+
             Row(
-              children: [
+              children: const [
                 Expanded(
                   child: _StatCard(
                     icon: Icons.code,
@@ -166,36 +195,40 @@ class HomeScreen extends StatelessWidget {
                     value: '100%',
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: 12),
                 Expanded(
                   child: _StatCard(
                     icon: Icons.phone_android,
-                    title: 'Mobile',
-                    value: '3 Tabs',
+                    title: 'Kiosk',
+                    value: 'FULLSCREEN',
                   ),
                 ),
               ],
             ),
+
             const SizedBox(height: 24),
+
             const Text(
-              'What this app shows',
+              'System Mode',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
+
             const SizedBox(height: 12),
-            _FeatureTile(
-              icon: Icons.layers,
-              title: 'Navigation',
-              subtitle: 'Switch between multiple screens easily.',
+
+            const _FeatureTile(
+              icon: Icons.lock,
+              title: 'Kiosk Mode',
+              subtitle: 'Runs fullscreen with no window controls.',
             ),
-            _FeatureTile(
-              icon: Icons.palette,
-              title: 'Modern UI',
-              subtitle: 'Material 3 styling with a clean layout.',
+            const _FeatureTile(
+              icon: Icons.desktop_windows,
+              title: 'Openbox Managed',
+              subtitle: 'Window manager enforces display rules.',
             ),
-            _FeatureTile(
-              icon: Icons.check_circle,
-              title: 'Ready to show',
-              subtitle: 'Simple, polished, and not just the default counter.',
+            const _FeatureTile(
+              icon: Icons.speed,
+              title: 'Auto Start',
+              subtitle: 'Launches automatically on system boot.',
             ),
           ],
         ),
@@ -204,6 +237,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+/// STAT CARD
 class _StatCard extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -239,6 +273,7 @@ class _StatCard extends StatelessWidget {
   }
 }
 
+/// FEATURE TILE
 class _FeatureTile extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -256,9 +291,7 @@ class _FeatureTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       child: ListTile(
-        leading: CircleAvatar(
-          child: Icon(icon),
-        ),
+        leading: CircleAvatar(child: Icon(icon)),
         title: Text(title),
         subtitle: Text(subtitle),
       ),
